@@ -14,8 +14,8 @@ enum Camera_Movement { FORWARD, BACKWARD, LEFT, RIGHT};
 // Default camera values
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 1.0f;
-const float SENSITIVITY = 0.001f;
+const float SPEED = 5.0f;
+const float SENSITIVITY = 0.1f;
 const float ZOOM = 90.0f;
 /*
 class OrbitCamera : Camera{
@@ -42,6 +42,9 @@ public:
   glm::vec3 Right;
   glm::vec3 WorldUp;
   glm::vec3 camFocusVector;
+  glm::vec3 axis;
+  glm::vec3 lightD;
+  glm::vec3 vel;
   // Euler Angles
   float Yaw;
   float Pitch;
@@ -51,12 +54,17 @@ public:
   float Zoom;
   float yPos;
   float velocity;
+  float agol;
+  float agol2;
+  bool flag;
+  float distanceFromPlayer = 10.0f;
+  float angleAroundPlayer = 0;
 
   bool jump1 = false;
   bool crouch1 = false;
 
   // Constructor with vectors
-  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
+  Camera(glm::vec3 position = glm::vec3(4.0f, 3.0f, 4.0f),
          glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),glm::vec3 camFocusVector = glm::vec3(0.0f, 0.0f, 0.0f), float yaw = YAW,
          float pitch = PITCH);
   // Constructor with scalar values
@@ -79,12 +87,32 @@ public:
   // Processes input received from a mouse scroll-wheel event. Only requires
   // input on the vertical wheel-axis
   void ProcessMouseScroll(float yoffset);
+  float calculateHorizontalDistance();
+  float calculateVerticalDistance();
+  void calculateCameraPosition(float horizDistance, float vertDistance);
+  float getRotY();
   glm::vec3 getFront()
   {
     return Front;
   }
 
+  glm::vec3 getAxis()
+  {
+    return axis;
+  }
 
+  float getAgol()
+  {
+    if(flag == true)
+    return agol;
+    return agol2;
+  }
+
+  glm::vec3 getLight()
+  {
+    return lightD;
+  }
+  void LimitOnMovement();
 private:
   // Calculates the front vector from the Camera's (updated) Euler Angles
   void updateCameraVectors();

@@ -1,0 +1,100 @@
+for (auto i=0; i<75; ++i) {
+            coinVertices.push_back(glm::cos(angle)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle)/7.0f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.0f);
+
+            angle = angle+PI_OVER_3/12.0f;
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/3.7f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/3.7f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/3.7f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/3.7f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/7.0f);
+            coinVertices.push_back(0.1f);
+
+            //vtora piramida
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/7.0f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle)/7.0f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/7.0f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle)/7.0f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle)/7.0f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/7.0f);
+            coinVertices.push_back(0.0f);
+
+            coinVertices.push_back(glm::cos(angle)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle)/7.0f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/7.0f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle)/3.7f+otstap);
+            coinVertices.push_back(glm::sin(angle)/3.7f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle)/7.0f);
+            coinVertices.push_back(0.1f);
+
+            coinVertices.push_back(glm::cos(angle-PI_OVER_3/12.0f)/7.0f+otstap);
+            coinVertices.push_back(glm::sin(angle-PI_OVER_3/12.0f)/7.0f);
+            coinVertices.push_back(0.1f);
+    }
