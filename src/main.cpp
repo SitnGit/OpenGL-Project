@@ -29,40 +29,15 @@ static Camera camera(glm::vec3(4.0f, 3.0f, 4.0f));
 static float lastX = SCR_WIDTH / 2.0f;
 static float lastY = SCR_HEIGHT / 2.0f;
 static bool firstMouse = true; 
-glm::vec3 cent = camera.getFront();
+glm::vec3 cent = camera.Front;
 //glm::vec3 cent = glm::vec3(0.0f,0.0f,-1.0f);
 // timing
 static float deltaTime = 0.0f; // time between current frame and last frame
 static float lastFrame = 0.0f;
-glm::vec3 LightD = glm::vec3(3.0f,10.0f,3.0f);
 
 int texBr = 1;
 float agol=0;
 std::vector<float> vertices3;
-
-void key_callback (GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if(key == GLFW_KEY_W && action == GLFW_PRESS)
-    {
-        //cent.x = cent.x+0.05f;
-        agol = 90.0f;
-    }
-    if(key == GLFW_KEY_S && action == GLFW_PRESS)
-    {
-        //cent.x = cent.x-0.05f;
-        agol = 270.0f;
-    }
-    if(key == GLFW_KEY_A && action == GLFW_PRESS)
-    {
-        //cent.z = cent.z-0.05f;
-        agol = 180.0f;
-    }
-    if(key == GLFW_KEY_D && action == GLFW_PRESS)
-    {
-        //cent.z = cent.z+0.05f;
-        agol = 0.0f;
-    }
-}
 
 class SceneObject{
 
@@ -118,7 +93,6 @@ class SceneObject{
           sizeZ = abs(firstPoint.z)+abs(secondPoint.z);
         }
 
-        //std::cout<<center.x<<center.y<<center.z<<" "<<sizeX<<" "<<sizeY<<" "<<sizeZ<<std::endl;
       };
 
 };
@@ -138,6 +112,7 @@ Direction VectorDirection(glm::vec3 target);
 void GenerateCuboids(glm::vec3 prva, glm::vec3 vtora, int br, SceneObject obj[]);
 unsigned int loadCubemap(std::vector<std::string> faces);
 bool CoinCollision(glm::vec3 coinLoc);
+unsigned int GenTexts(std::vector<std::string> texLocs, int br);
 
 int main() {
   // glfw: initialize and configure
@@ -157,7 +132,6 @@ int main() {
   // --------------------
   GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT,
                                         program_name.c_str(), nullptr, nullptr);
-  glfwSetKeyCallback(window,key_callback);
   if (window == nullptr) {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
@@ -272,26 +246,17 @@ int main() {
         //vertices
         for(int j=0; j<= brSector; ++j){
 
-            cent = camera.getFront();
+            cent = camera.Front;
             angle2 = j*stepSector;
 
             x = pom * cosf (angle2);
             y = pom * sinf (angle2);
 
-            //vertices2.push_back(x+cent.x);
-            //vertices2.push_back(y+cent.y);
-            //vertices2.push_back(z+cent.z);
             vertices2.push_back(x);
             vertices2.push_back(y);
             vertices2.push_back(z);
 
-            //vertices2.push_back(red);
-            //vertices2.push_back(green);
-            //vertices2.push_back(blue);
         }
-        //blue-=(float)1/brStack;
-        //green-=(float)1/brStack;
-        //red-=(float)1/brStack;
     }
     //indices
     for(int i=0;i<brStack;++i){
@@ -476,9 +441,6 @@ float screenVertices[] = {
     }
 
   SceneObject *objects = new SceneObject[17];
-  //bool poX = true;
-  //GenerateCuboids(glm::vec3(-6.0f, -1.0f, -6.0f),glm::vec3(-2.0f, 2.0f, -4.0f),0,objects);
-  //GenerateCuboids(glm::vec3(10.0f, -1.0f, 5.0f),glm::vec3(15.0f, 2.0f, 15.0f),1,objects);
   
   GenerateCuboids(glm::vec3(-2.0f, -1.0f, -2.0f),glm::vec3(2.0f, 2.0f, 2.0f),0,objects);
   GenerateCuboids(glm::vec3(-10.0f, -1.0f, -11.0f),glm::vec3(-6.0f, 2.0f, -5.0f),1,objects);
@@ -516,6 +478,7 @@ float screenVertices[] = {
   glGenBuffers(1, &screenVBO);
   glGenBuffers(1, &EBO);
 
+  //PLATFORM
   glBindVertexArray(VAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -529,6 +492,7 @@ float screenVertices[] = {
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
+  //SPHERE
   glBindVertexArray(VAO2);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO2);
@@ -540,10 +504,10 @@ float screenVertices[] = {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
 
+  //CUBOIDS
   glBindVertexArray(VAO3);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO3);
-  //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices3), vertices3, GL_STATIC_DRAW);
   glBufferData(GL_ARRAY_BUFFER, vertices3.size()*sizeof(float), &vertices3[0], GL_STATIC_DRAW);
 
   // position attribute
@@ -553,6 +517,7 @@ float screenVertices[] = {
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
+  //SKYBOX
   glBindVertexArray(VAO4);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO4);
@@ -562,6 +527,7 @@ float screenVertices[] = {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
+  //COIN
   glBindVertexArray(coinVAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, coinVBO);
@@ -571,10 +537,10 @@ float screenVertices[] = {
   glEnableVertexAttribArray(0);
   // texture coord attribute
 
+  //SCREEN
   glBindVertexArray(screenVAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-  //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices3), vertices3, GL_STATIC_DRAW);
   glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), screenVertices, GL_STATIC_DRAW);
 
   // position attribute
@@ -583,150 +549,9 @@ float screenVertices[] = {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         reinterpret_cast<void *>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
-  //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                       // reinterpret_cast<void *>(3 * sizeof(float)));
-  //glEnableVertexAttribArray(1);
-  //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),(void *)(3 * sizeof(float)));
-  //glEnableVertexAttribArray(3);
+  
   // load and create a texture
   // -------------------------
-  unsigned int texture1, texture2, textureStart, textureWin, textureLose;
-  
-  // texture 1
-  // ---------
-  glGenTextures(1, &texture1);
-  glBindTexture(GL_TEXTURE_2D, texture1);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // load image, create texture and generate mipmaps
-  int width, height, nrChannels;
-  stbi_set_flip_vertically_on_load(
-      true); // tell stb_image.h to flip loaded texture's on the y-axis.
-  // The FileSystem::getPath(...) is part of the GitHub repository so we can
-  // find files on any IDE/platform; replace it with your own image path.
-  unsigned char *data = stbi_load("../res/textures/platform2.jpg", &width,
-                                  &height, &nrChannels, 0);
-  if (data) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
-
-  // texture 2
-  // ---------
-  glGenTextures(1, &texture2);
-  glBindTexture(GL_TEXTURE_2D, texture2);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  stbi_set_flip_vertically_on_load(
-      true);
-  // load image, create texture and generate mipmaps
-  data = stbi_load("../res/textures/crate.jpg", &width, &height,
-                   &nrChannels, 0);
-  if (data) {
-    // note that the awesomeface.png has transparency and thus an alpha channel,
-    // so make sure to tell OpenGL the data type is of GL_RGBA
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
-
-  
-  glGenTextures(1, &textureStart);
-  glBindTexture(GL_TEXTURE_2D, textureStart);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  stbi_set_flip_vertically_on_load(
-      true);
-  // load image, create texture and generate mipmaps
-  data = stbi_load("../res/textures/Start.jpg", &width, &height,
-                   &nrChannels, 0);
-  if (data) {
-    // note that the awesomeface.png has transparency and thus an alpha channel,
-    // so make sure to tell OpenGL the data type is of GL_RGBA
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
-  
-  glGenTextures(1, &textureWin);
-  glBindTexture(GL_TEXTURE_2D, textureWin);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  stbi_set_flip_vertically_on_load(
-      true);
-  // load image, create texture and generate mipmaps
-  data = stbi_load("../res/textures/Winner.jpg", &width, &height,
-                   &nrChannels, 0);
-  if (data) {
-    // note that the awesomeface.png has transparency and thus an alpha channel,
-    // so make sure to tell OpenGL the data type is of GL_RGBA
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
-  
-  glGenTextures(1, &textureLose);
-  glBindTexture(GL_TEXTURE_2D, textureLose);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  stbi_set_flip_vertically_on_load(
-      true);
-  // load image, create texture and generate mipmaps
-  data = stbi_load("../res/textures/Loser.jpg", &width, &height,
-                   &nrChannels, 0);
-  if (data) {
-    // note that the awesomeface.png has transparency and thus an alpha channel,
-    // so make sure to tell OpenGL the data type is of GL_RGBA
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
   
   // tell opengl for each sampler to which texture unit it belongs to (only has
   // to be done once)
@@ -740,19 +565,35 @@ float screenVertices[] = {
     "../res/textures/front.jpg",
     "../res/textures/back.jpg"
 };
+std::vector<std::string> texLoc = 
+{
+    "../res/textures/platform2.jpg",
+    "../res/textures/crate.jpg",
+    "../res/textures/Winner.jpg",
+    "../res/textures/Loser.jpg",
+    "../res/textures/Start.jpg"
+};
+
+unsigned int texture1, texture2, textureStart, textureWin, textureLose;
+texture1 = GenTexts(texLoc,0);
+texture2 = GenTexts(texLoc,1);
+textureWin = GenTexts(texLoc,2);
+textureLose = GenTexts(texLoc,3);
+textureStart = GenTexts(texLoc,4);
+
+ourShader.use();
+ourShader.setInt("texture1", 0);
+urShader.use();
+urShader.setInt("texture2", 1);
+skyShader.use();
+skyShader.setInt("skybox", 0);
+screenShader.use();
+screenShader.setInt("textureWin", 2);
+screenShader.setInt("textureLose", 3);
+screenShader.setInt("textureStart", 4);
+
+
 unsigned int cubemapTexture = loadCubemap(faces);  
-  ourShader.use();
-  ourShader.setInt("texture1", 0);
-  urShader.use();
-  urShader.setInt("texture2", 1);
-  skyShader.use();
-  skyShader.setInt("skybox", 0);
-  screenShader.use();
-  screenShader.setInt("textureWin", 2);
-  screenShader.setInt("textureLose", 3);
-  screenShader.setInt("textureStart", 4);
-  //ourShader.setInt("texture1", 0);
-  //ourShader.setInt("texture2", 1);
   glEnable(GL_DEPTH_TEST);
   // render loop
   // -----------
@@ -766,8 +607,7 @@ unsigned int cubemapTexture = loadCubemap(faces);
   };
   
   glm::vec3 coinLoc = coinLocs[rand()%5];
-  //glm::vec3 coinLoc = coinLocs[1];
-  //bool start = true;
+
   while (!glfwWindowShouldClose(window)) {
     // per-frame time logic
     // --------------------
@@ -784,7 +624,7 @@ unsigned int cubemapTexture = loadCubemap(faces);
     //std::cout<<coinLoc.x<<" "<<coinLoc.y<<" "<<coinLoc.z<<std::endl;
   
     // bind textures on corresponding texture units
-    if(glfwGetTime()<5)
+    if(glfwGetTime()<5)//if time hasnt passed 5 seconds, generate starting screen
     {
       screenShader.use();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -800,16 +640,14 @@ unsigned int cubemapTexture = loadCubemap(faces);
         screenShader.setMat4("view", view);
 
         glm::mat4 model = glm::mat4(1.0f);
-        //float angle = 20.0f * 0;
-        //model = glm::rotate (model, glm::radians (angle), glm::vec3 (1.0f, 0.3f, 0.5f));
         screenShader.setMat4("model", model);
         screenShader.setInt("which",2);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
-    else{
+    else{//time has passed first 5 seconds
     bool endGameWin = CoinCollision(glm::vec3(coinLoc));
     // activate shader
-    if (glfwGetTime() > 20  && endGameWin==false)
+    if (glfwGetTime() > 20  && endGameWin==false)//if time has passed 20 seconds and player hasnt won, generate lose screen
     {
       screenShader.use();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -825,36 +663,29 @@ unsigned int cubemapTexture = loadCubemap(faces);
         screenShader.setMat4("view", view);
 
         glm::mat4 model = glm::mat4(1.0f);
-        //float angle = 20.0f * 0;
-        //model = glm::rotate (model, glm::radians (angle), glm::vec3 (1.0f, 0.3f, 0.5f));
         screenShader.setMat4("model", model);
         screenShader.setInt("which",1);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
-    else
+    else // if time is under 20 seconds
     {
-      if (!endGameWin)
+      if (!endGameWin)// if player hasnt won, generate world
       {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        //PLATFORM
         ourShader.use();
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
-        //ourShader.setInt("texture1", 0);
-        cent = camera.getFront();
-
-        glm::vec3 Axis = camera.getAxis();
-        LightD = camera.lightD;
-
-        //agol = dist/perimetar * deltaTime;
-        agol = camera.getAgol();
+        cent = camera.Front;
+      
         // pass projection matrix to shader (note that in this case it could change
         // every frame)
         glm::mat4 projection = glm::perspective(
-            glm::radians(camera.Zoom), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
+            glm::radians(camera.getZoom()), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
         ourShader.setMat4("projection", projection);
 
         // camera/view transformation
@@ -862,36 +693,31 @@ unsigned int cubemapTexture = loadCubemap(faces);
         ourShader.setMat4("view", view);
 
         glm::mat4 model = glm::mat4(1.0f);
-        //float angle = 20.0f * 0;
-        //model = glm::rotate (model, glm::radians (angle), glm::vec3 (1.0f, 0.3f, 0.5f));
         ourShader.setMat4("model", model);
 
         glBindVertexArray(VAO);
 
         glDrawArrays(GL_TRIANGLES, 0, 32);
 
+        //SPHERE
         glBindVertexArray(VAO2);
 
         //std::cout<<camera.lightPos.x;
         myShader.use();
         myShader.setVec3("objectColor", 0.0f, 1.0f, 0.0f);
         myShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        //myShader.setVec3("lightPos", LightD);
-        myShader.setVec3("viewPos", camera.Position);
+        myShader.setVec3("viewPos", camera.getPos());
 
         // view/projection transformations
         projection = glm::perspective(
-            glm::radians(camera.Zoom), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
+            glm::radians(camera.getZoom()), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
         view = camera.GetViewMatrix();
-        //view = glm::translate(view, glm::vec3(cent.x, cent.y, cent.z));
         myShader.setMat4("projection", projection);
         myShader.setMat4("view", view);
 
         // world transformation
 
         model = glm::mat4(1.0f);
-        angle = 20.0f * 0;
-        //model = glm::rotate (model, glm::radians (angle), glm::vec3 (1.0f, 0.3f, 0.5f));
         Collision col = CheckCollision(objects);
         if (std::get<0>(col)) // if collision is true
         {
@@ -904,12 +730,10 @@ unsigned int cubemapTexture = loadCubemap(faces);
             float penetration = 1.0f - std::abs(diff_vector.z);
             if (dir == PORT)
             {
-              //cent.x += penetration;
               camera.Front.z += penetration;
             } // move ball to right
             else
             {
-              //cent.x -= penetration;
               camera.Front.z -= penetration;
             } // move ball to left;
           }
@@ -919,34 +743,33 @@ unsigned int cubemapTexture = loadCubemap(faces);
             float penetration = 1.0f - std::abs(diff_vector.x);
             if (dir == FRONT)
             {
-              //cent.x -= penetration;
               camera.Front.x -= penetration;
             } // move ball back up
             else
             {
-              //cent.x += penetration;
               camera.Front.x += penetration;
             } // move ball back down
           }
         }
+        glm::vec3 Axis = camera.getAxis();
+        agol = camera.getAgol();
+
         model = glm::translate(model, glm::vec3(cent.x, cent.y, cent.z));
-        //std::cout<<col;
         model = glm::rotate(model, glm::radians(agol), Axis);
         myShader.setMat4("model", model);
         myShader.setVec3("lightPos", cent.x, 20.0f, cent.z);
 
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void *)0);
 
+        //CUBOIDS
         glBindVertexArray(VAO3);
 
         urShader.use();
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
-        //urShader.setInt("texture2", 0);
         projection = glm::perspective(
-            glm::radians(camera.Zoom), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
+            glm::radians(camera.getZoom()), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
         view = camera.GetViewMatrix();
-        //view = glm::translate(view, glm::vec3(cent.x, cent.y, cent.z));
         urShader.setMat4("projection", projection);
         urShader.setMat4("view", view);
         model = glm::mat4(1.0f);
@@ -956,16 +779,14 @@ unsigned int cubemapTexture = loadCubemap(faces);
 
         camera.LimitOnMovement();
 
-        //std::cout << glfwGetTime() << std::endl;
-
+        //COIN
         coinShader.use();
 
         glBindVertexArray(coinVAO);
 
         projection = glm::perspective(
-            glm::radians(camera.Zoom), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
+            glm::radians(camera.getZoom()), SCR_WIDTH * 1.0f / SCR_HEIGHT, 0.1f, 100.0f);
         view = camera.GetViewMatrix();
-        //view = glm::translate(view, glm::vec3(cent.x, cent.y, cent.z));
         coinShader.setMat4("projection", projection);
         coinShader.setMat4("view", view);
         model = glm::mat4(1.0f);
@@ -977,6 +798,7 @@ unsigned int cubemapTexture = loadCubemap(faces);
 
         glDrawArrays(GL_TRIANGLES, 0, 2048);
 
+        //SKYBOX
         glDepthMask(GL_FALSE);
         skyShader.use();
         // ... set view and projection matrix
@@ -989,7 +811,7 @@ unsigned int cubemapTexture = loadCubemap(faces);
         glDrawArrays(GL_TRIANGLES, 0, 64);
         glDepthMask(GL_TRUE);
       }
-      else
+      else // if player has won, generate win screen 
       {
         screenShader.use();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1005,8 +827,6 @@ unsigned int cubemapTexture = loadCubemap(faces);
         screenShader.setMat4("view", view);
 
         glm::mat4 model = glm::mat4(1.0f);
-        //float angle = 20.0f * 0;
-        //model = glm::rotate (model, glm::radians (angle), glm::vec3 (1.0f, 0.3f, 0.5f));
         screenShader.setMat4("model", model);
         screenShader.setInt("which",0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1027,6 +847,14 @@ unsigned int cubemapTexture = loadCubemap(faces);
   glDeleteBuffers(1, &VBO);
   glDeleteVertexArrays(1, &VAO2);
   glDeleteBuffers(1, &VBO2);
+  glDeleteVertexArrays(1, &VAO3);
+  glDeleteBuffers(1, &VBO3);
+  glDeleteVertexArrays(1, &VAO4);
+  glDeleteBuffers(1, &VBO4);
+  glDeleteVertexArrays(1, &coinVAO);
+  glDeleteBuffers(1, &coinVBO);
+  glDeleteVertexArrays(1, &screenVAO);
+  glDeleteBuffers(1, &screenVBO);
   glDeleteBuffers(1, &EBO);
 
   // glfw: terminate, clearing all previously allocated GLFW resources.
@@ -1266,6 +1094,38 @@ void GenerateCuboids(glm::vec3 prva, glm::vec3 vtora, int br, SceneObject obj[])
   vertices3.push_back(1.0f);
   vertices3.push_back(1.0f);
   }
+}
+
+unsigned int GenTexts(std::vector<std::string> texLoc, int br)
+{
+  unsigned int texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  // set the texture wrapping parameters
+  glTexParameteri(
+      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  // set texture filtering parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  stbi_set_flip_vertically_on_load(
+      true);
+      int width, height, nrChannels;
+  // load image, create texture and generate mipmaps
+  unsigned char *data = stbi_load(texLoc[br].c_str(), &width, &height,
+                   &nrChannels, 0);
+  if (data) {
+    // note that the awesomeface.png has transparency and thus an alpha channel,
+    // so make sure to tell OpenGL the data type is of GL_RGBA
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  } else {
+    std::cout << "Failed to load texture" << std::endl;
+  }
+  stbi_image_free(data);
+  return texture;
 }
 
 unsigned int loadCubemap(std::vector<std::string> faces)
